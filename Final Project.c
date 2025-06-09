@@ -132,6 +132,120 @@ void performInteraction() {
     }
 }
 
+void moveCat() {
+    prevPos = catPos;
+    if (mood == 0) {
+        printf("기분이 매우 나쁜 %s은(는) 집으로 향합니다.\n", name);
+        if (catPos > HOME_POS) catPos--;
+    }
+    else if (mood == 1) {
+        if (hasScratcher || hasTower) {
+            int target = -1;
+            if (hasScratcher && hasTower)
+                target = (abs(catPos - scratcherPos) < abs(catPos - towerPos)) ? scratcherPos : towerPos;
+            else if (hasScratcher) target = scratcherPos;
+            else target = towerPos;
+            if (catPos < target) catPos++;
+            else if (catPos > target) catPos--;
+            printf("%s은(는) 심심해서 놀이기구 쪽으로 이동합니다.\n", name);
+        }
+        else {
+            printf("놀 거리가 없어서 기분이 매우 나빠집니다.\n");
+            mood = 0;
+        }
+    }
+    else if (mood == 3) {
+        printf("%s은(는) 골골송을 부르며 수프를 만들러 갑니다.\n", name);
+        if (catPos < BOWL_POS) catPos++;
+    }
+    else {
+        printf("%s은(는) 기분 좋게 식빵을 굽고 있습니다.\n", name);
+    }
+}
+
+void performAction() {
+    if (catPos == HOME_POS && prevPos == HOME_POS && mood < 3) {
+        mood++;
+        printf("%s은(는) 집에서 편안하게 쉬고 있습니다. 기분이 좋아졌습니다.\n", name);
+    }
+    else if (catPos == BOWL_POS) {
+        makeSoup();
+    }
+    else if (catPos == scratcherPos) {
+        mood++;
+        if (mood > 3) mood = 3;
+        printf("%s은(는) 스크래처를 긁고 놀았습니다.\n", name);
+    }
+    else if (catPos == towerPos) {
+        mood += 2;
+        if (mood > 3) mood = 3;
+        printf("%s은(는) 캣타워를 뛰어다닙니다.\n", name);
+    }
+}
+
+void produceCP() {
+    int gain = (mood > 0 ? mood - 1 : 0) + intimacy;
+    cp += gain;
+    printf("%s의 기분과 친밀도에 따라 CP를 %d 포인트 얻었습니다. 현재 CP: %d\n", name, gain, cp);
+}
+
+void shop() {
+    printf("상점에서 물건을 살 수 있습니다.\n0. 아무 것도 사지 않는다\n");
+    printf("1. 장난감 쥐: 1CP %s\n", hasToyMouse ? "(품절)" : "");
+    printf("2. 레이저 포인터: 2CP %s\n", hasLaser ? "(품절)" : "");
+    printf("3. 스크래처: 4CP %s\n", hasScratcher ? "(품절)" : "");
+    printf("4. 캣타워: 6CP %s\n", hasTower ? "(품절)" : "");
+
+    int choice;
+    do {
+        printf(">> ");
+        scanf_s("%d", &choice);
+    } while (choice < 0 || choice > 4);
+
+    if (choice == 0) return;
+    if ((choice == 1 && hasToyMouse) || (choice == 2 && hasLaser) ||
+        (choice == 3 && hasScratcher) || (choice == 4 && hasTower)) {
+        printf("이미 구매한 물건입니다.\n");
+        return;
+    }
+
+    int price[] = { 0, 1, 2, 4, 6 };
+    if (cp < price[choice]) {
+        printf("CP가 부족합니다.\n");
+        return;
+    }
+
+    cp -= price[choice];
+    printf("구매 완료. 남은 CP: %d\n", cp);
+    if (choice == 1) hasToyMouse = true;
+    else if (choice == 2) hasLaser = true;
+    else if (choice == 3) {
+        hasScratcher = true;
+        scratcherPos = rand() % (ROOM_WIDTH - 4) + 2;
+    }
+    else if (choice == 4) {
+        hasTower = true;
+        do {
+            towerPos = rand() % (ROOM_WIDTH - 4) + 2;
+        } while (towerPos == scratcherPos);
+    }
+}
+
+void suddenQuest() {
+    printf("돌발 퀘스트 발생! %s이(가) 숨은 고양이 발바닥을 찾고 있습니다.\n", name);
+    printf("5초 안에 1~5 중 고양이 발바닥이 있을 위치를 맞혀보세요! >> ");
+    int correct = rand() % 5 + 1;
+    int answer;
+    scanf_s("%d", &answer);
+    if (answer == correct) {
+        printf("정답! 친밀도 +1!\n");
+        if (intimacy < 4) intimacy++;
+    }
+    else {
+        printf("틀렸습니다... 기분 -1\n");
+        if (mood > 0) mood--;
+    }
+}
 
     return 0;
 }
