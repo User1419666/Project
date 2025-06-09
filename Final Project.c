@@ -247,5 +247,34 @@ void suddenQuest() {
     }
 }
 
+int main() {
+    srand((unsigned int)time(NULL));
+    printf("****야옹이와 수프 ver.2****\n고양이 이름을 지어주세요: ");
+    scanf_s("%s", name, (unsigned)_countof(name));
+
+    while (1) {
+        turn++;
+        printStatus();
+
+        // 기분 나빠짐
+        int bad = rollDice();
+        if (bad <= 6 - intimacy && mood > 0) {
+            printf("아무 이유 없이 기분이 나빠집니다.\n");
+            mood--;
+        }
+
+        moveCat();
+        performAction();
+        drawRoom();
+        performInteraction();
+        produceCP();
+        if (turn == 3) suddenQuest();
+        shop();
+
+        Sleep(3000);
+        system("cls");
+    }
+
+
     return 0;
 }
