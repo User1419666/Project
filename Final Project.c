@@ -249,7 +249,17 @@ void suddenQuest() {
 
 int main() {
     srand((unsigned int)time(NULL));
-    printf("****야옹이와 수프 ver.2****\n고양이 이름을 지어주세요: ");
+    
+    printf("****야옹이와 수프 ver.2****\n");
+    printf("         /\\_/\\\n");
+    printf("  /\\    / o o \\\n");
+    printf(" //\\\\   \\~(*)~/\n");
+    printf(" `  \\/     ^ /\n");
+    printf("     | \\ || ||\n");
+    printf("     \\ ' || ||\n");
+    printf("      \\) ()-())\n");
+    printf("\n");
+    printf("야옹이의 이름을 지어 주세요 (최대 19자): ");
     scanf_s("%s", name, (unsigned)_countof(name));
 
     while (1) {
@@ -274,7 +284,5 @@ int main() {
         Sleep(3000);
         system("cls");
     }
-
-
     return 0;
 }
