@@ -16,6 +16,17 @@ bool hasTower = false;
 int scratcherPos = -1;
 int towerPos = -1;
 
+// 야옹이 상태
+char name[20];
+int intimacy = 2;
+int mood = 3;
+int soupCount = 0;
+int cp = 0;
+int catPos = HOME_POS;
+int prevPos = HOME_POS;
+int turn = 0;
+
+
 
     return 0;
 }
